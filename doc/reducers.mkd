@@ -1,0 +1,72 @@
+
+reducers
+========
+
+Motivation
+----------
+
+It's all about performance.
+"10 years ago, how did you make your programs faster?
+You waited.  You waited 18 months" - Rich Hickey
+
+We've lost this because clock speeds have topped and our programs are painfully sequential
+
+Reducers are an attempt to restore this property to Clojure
+
+
+Core choices
+-------------
+Less allocations - it is not lazy
+Parallelization - spread out to cores
+
+
+History
+--------
+ * Forced sequentiality
+ * Loops => Higher-order functions on lists => HOFs on collections => Collection Independence => Order Independence
+
+
+A look at `map` and `reduce`
+----------------------------
+Let's see some [code](./../src/pdxfunc/simpleops.clj)
+
+Reduction Transformers
+------------------------
+We want to delay the work - do not make a new collection.
+
+We're going to change what "reduce" means for the collection.
+We do that by modifying the reducing function
+Enter the Rich Hickey's pie maker!!
+
+The pie maker
+--------------
+Expert pie maker - makes pies out of a bag of apples.
+His assistant hands him the apples.  Telling the assistant what to do is a Reduction Transformer
+
+* Stickers off the apples (map)
+* Remove the rotten apples (filter/remove)
+
+Now we're building up a modified version of what it means to build up that bag of apples
+
+So we're effectively saying "reduce the apples for the pie" when we execute.
+This is not lazy seqs though - lazy seqs do more (and are fundamentally built around SEQUENCES)
+
+Let's see what [mapping](./../src/pdxfunc/transformers.clj) looks like as a "pie maker"/transformer
+
+Clojure's `fold`
+----------------
+What if `reduce` could be a parallel operation?
+That's what fold is - reduce with the order-promise removed.
+
+In order to do that, Clojure needs to do a reduce+combine strategy.
+Let's [explore](./../src/pdxfunc/foldit.clj)
+
+
+Closing notes
+-------------
+This is not replacing lazy seqs - those still have a job, totally unrelated to this stuff
+
+More info
+----------
+ * See Rich Hickey's EuroClojure talk, [Reducers](http://vimeo.com/45561411)
+

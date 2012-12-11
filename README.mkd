@@ -1,0 +1,62 @@
+pdxfunc
+=======
+
+This is the project, demo, notes and presentation for my [pdxfunc](http://pdxfunc.org/) talk on [Clojure Data Structures and Reducers](http://calagator.org/events/1250462628)
+
+
+A General Overview
+-------------------
+### Using the Clojure REPL
+
+More to come, but: `lein repl`
+
+Working with Clojure
+--------------------
+### VimClojure and Foreplay tips
+
+Here are helpful Foreplay and VimClojure commands
+
+ * K - lookup word
+ * gd - goto definition (`ctrl-w g d` is most helpful)
+ * gf - goto file (`ctrl-w g f` is most helpful)
+ * [d - source lookup of word
+ * cpp - eval paragraph
+ * cpr - require file
+ * cpw - eval word (see what it's bound/def'd to)
+ * :Source, :Doc, :FindDoc, and :Apropros
+ * \tr - toggle rainbow parens
+
+### Paredit.vim tips
+
+I also make use of the paredit.vim file from the slimv.vim plugin. This assumes your `<leader>` is `\`
+
+ * :call PareditToggle() - toggle it on and off.
+ * \W wrap in paren (works with visual selection too)
+ * \J join paren - (a)(b) -> (a b)
+ * \O split paren - (a b) -> (a)(b)
+ * \S splice paren - ((a b)) -> (a b)
+ * \< move left - moves parens around blocks (a)|(b) -> ((a) b)
+ * \> move right - moves parens around blocks (a|)(b) -> (a (b))
+ * `[[` and `]]` browses across top-level forms
+ * `(` and `)` browses across parens
+
+Wrapping can also be tailored, and used on a visual block:
+
+ * `\w"`
+ * `\w[`
+ * `\w(`
+
+
+Other useful tips
+-----------------
+### Other VIM tips
+
+ * Use [surround.vim](http://www.vim.org/scripts/script.php?script_id=1697)
+
+License
+-------
+Copyright © 2012 Paul deGrandis // NDensity
+
+Distributed under the Eclipse Public License, the same as Clojure.
+Please see the `LICENSE_epl.html` for details.
+

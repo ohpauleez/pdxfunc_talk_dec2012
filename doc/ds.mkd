@@ -1,0 +1,109 @@
+
+Persistent, Immutable Data Structures
+======================================
+
+The big idea
+------------
+
+In FP, we want to avoid unconstrained mutability.
+At our core, we apply functions to static data, which generates new data.
+
+Related to this is [referential transparency](http://en.wikipedia.org/wiki/Referential_transparency_%28computer_science%29) -
+ not only does the function have to be pure, the data can't magically change on us.
+(one caveat to that - perhaps we pass in a DS which we need to deference to get the stable value.
+That value could change before the moment we deref it, but that's by design - ie: it is controlled)
+
+So we need functional data structures - ones that are immutable.
+
+But how can we design data structures in this fashion, that behave similar to non-functional data structures
+in both runtime characteristics and interface.
+
+
+A first step
+------------
+
+What are we trying to build?
+
+ * Sequential - head/tail, linear otherwise; order-preserved
+ * Associative - random access; order doesn't make sense
+
+
+Wait, this is too easy; the naive approach
+-------------------------------------------
+
+We can easily create immutable data structures if we just copy-on-write.
+
+But, that's O(n) on operations; NO GOOD FOR US!
+So we need *Structural Sharing* - share between the old version, and the new version.
+
+This is the core of all functional data structures.  It's how we cheat
+
+Singly-linked list
+-------------------
+ * elements are one of two things: Cons cell (head, and rest) or nil
+ * O(1) head lookup, and O(n) lookups for everything else
+
+But let's look at some structural sharing with [singly-linked lists](./../src/pdxfunc/sll.clj)
+
+Persistent Data Structures
+---------------------------
+
+This is also the heart of [Persistent Data Structures](http://en.wikipedia.org/wiki/Persistent_data_structure)
+
+Let's take a look at [Alan Dipert's OSCon talk](http://alandipert.github.com/oscon2012-clojure/#sec-3-5) notes.
+
+Getting more complex
+---------------------
+
+We need something more sophisticated underneath to handle more data structures.
+Given the properties we're shooting for, trees are nice - and that's what's at the core of Clojure's data structures.
+
+Red-black trees (balanced binary search trees) -
+great details can be found in [Daniel Spiewak's Clojure Conj 2011 talk](http://blip.tv/clojure/daniel-spiewak-extreme-cleverness-functional-data-structures-in-scala-5970151)
+
+Ok - so we're at O(log n) for most things
+
+We can do better.
+What if we combined some properties from assoc and seq?
+ * preserves insert order
+ * fast access to head and tail
+ * extremely fast access to the stuff in the middle
+
+Bitmapped Vector Trie - or `vector`
+------------------------------------
+O(1) - first, last, nth, append, update, count
+O(n) - concat, insert, prepend
+
+Created by Rich Hickey and Phil Bagwell
+
+O(log32 n) - n length of the vector, an int - bounded by 2.5 billion on the JVM - 7.
+So any dataset that fits in memory if O(7) - so c'mon... constant time
+
+
+How it works
+-------------
+ * `array[32]`
+ * Copy-on-write for n < 32
+ * Once you hit the limit, you place it in an array of arrays. `array[_][32]`
+ * Continue doing this: array-of-array-of-arrays, etc
+ * The deepest level you can hit is *7*
+
+
+An how about hash table/map like things?
+----------------------------------------
+ * HAMT - Hash array mapped tries
+ * Same type of technique for "chunking" branching to 32 other nodes
+ * Uses 32-bit bitmaps at each node
+ * More details on addressing specifics [here](http://blog.higher-order.net/2009/09/08/understanding-clojures-persistenthashmap-deftwice/)
+
+This is a lot of hand-waving, Paul
+-----------------------------------
+Yes, yes it is.
+I suggest you watch the following talks if you're interested in full details
+
+ * http://blip.tv/clojure/daniel-spiewak-extreme-cleverness-functional-data-structures-in-scala-5970151
+ * http://blip.tv/clojure/clojure-data-structures-part-1-714056
+ * http://blip.tv/clojure/clojure-data-structures-part-2-714064
+ * http://blip.tv/clojure/phill-bagwell-striving-to-make-things-simple-and-fast-5936145
+ * http://blip.tv/clojure/chris-houser-finger-trees-custom-persistent-collections-4632874
+
