@@ -35,8 +35,8 @@ I also make use of the paredit.vim file from the slimv.vim plugin. This assumes 
  * \J join paren - (a)(b) -> (a b)
  * \O split paren - (a b) -> (a)(b)
  * \S splice paren - ((a b)) -> (a b)
- * \< move left - moves parens around blocks (a)|(b) -> ((a) b)
- * \> move right - moves parens around blocks (a|)(b) -> (a (b))
+ * \\< move left - moves parens around blocks (a)|(b) -> ((a) b)
+ * \\> move right - moves parens around blocks (a|)(b) -> (a (b))
  * `[[` and `]]` browses across top-level forms
  * `(` and `)` browses across parens
 
